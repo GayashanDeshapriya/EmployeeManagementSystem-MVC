@@ -22,7 +22,11 @@ namespace EmployeeManagementApp.Data
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            var holiday = _context.PublicHolidays.Find(id);
+            if (holiday != null)
+            {
+                _context.PublicHolidays.Remove(holiday);
+            }
         }
 
         public IEnumerable<PublicHoliday> GetAll()
@@ -32,12 +36,12 @@ namespace EmployeeManagementApp.Data
 
         public PublicHoliday GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.PublicHolidays.Find(id);
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _context.SaveChanges();
         }
 
         public void Update(PublicHoliday holiday)

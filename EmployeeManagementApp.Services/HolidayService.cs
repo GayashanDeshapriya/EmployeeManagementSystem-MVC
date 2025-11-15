@@ -31,12 +31,13 @@ namespace EmployeeManagementApp.Services
 
         public PublicHoliday GetHolidayById(int id)
         {
-            throw new System.NotImplementedException();
+            return _holidayRepo.GetById(id);
         }
 
         public void UpdateHoliday(PublicHoliday holiday)
         {
-            throw new System.NotImplementedException();
+            _holidayRepo.Update(holiday);
+            _holidayRepo.Save();
         }
     }
 }
