@@ -24,6 +24,7 @@ namespace EmployeeManagementApp.Services
         public void DeleteEmployee(int id)
         {
             _employeeRepo.Delete(id);
+            _employeeRepo.Save();
         }
 
         public IEnumerable<Employee> GetAllEmployees()

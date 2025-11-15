@@ -33,7 +33,7 @@ namespace EmployeeManagementApp.Controllers
 
             try
             {
-                
+
                 model.CreatedAt = DateTime.Now;
                 model.CreatedBy = "System";
                 _service.AddEmployee(model);
@@ -52,6 +52,29 @@ namespace EmployeeManagementApp.Controllers
                 }
                 ModelState.AddModelError("", "An error occurred while creating the employee.");
                 return View(model);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                _service.DeleteEmployee(id);
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = true, message = "Employee deleted successfully!" }, JsonRequestBehavior.AllowGet);
+                }
+                return RedirectToAction("Employee");
+            }
+            catch (Exception ex)
+            {
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = false, message = "Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
+                }
+                ModelState.AddModelError("", "An error occurred while deleting the employee.");
+                return RedirectToAction("Employee");
             }
         }
     }

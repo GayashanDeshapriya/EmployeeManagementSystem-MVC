@@ -20,7 +20,12 @@ namespace EmployeeManagementApp.Data
         }
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            var employee = _context.Employees.Find(id);
+            if (employee == null)
+            {
+                throw new Exception($"Employee with ID {id} not found.");
+            }
+            _context.Employees.Remove(employee);
         }
 
         public IEnumerable<Employee> GetAll()

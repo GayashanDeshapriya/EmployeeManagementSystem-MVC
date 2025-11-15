@@ -1,5 +1,5 @@
-﻿@model IEnumerable < EmployeeManagementApp.Data.Context.Employee >
-    @{
+﻿@model IEnumerable<EmployeeManagementApp.Data.Context.Employee>
+@{
     ViewBag.Title = "Employee";
 }
 
@@ -43,8 +43,8 @@
                                 <td>@employee.JobPosition</td>
                                 <td>@employee.CreatedAt.ToString("MM/dd/yyyy")</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info">Edit</button>
-                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                    <button class="btn btn-sm btn-info btn-edit" data-id="@employee.EmployeeId">Edit</button>
+                                    <button class="btn btn-sm btn-danger btn-delete" data-id="@employee.EmployeeId">Delete</button>
                                 </td>
                             </tr>
                         }
@@ -203,6 +203,51 @@
                     }
                 });
             });
+
+            $(document).on('click', '.btn-delete', function (e) {
+                debugger;
+    e.preventDefault();
+
+    var employeeId = $(this).data('id');
+    var $row = $(this).closest('tr');
+
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete this employee?')) {
+        return;
+    }
+
+    // Disable button during request
+    $(this).prop('disabled', true);
+
+    $.ajax({
+        url: '@Url.Action("Delete", "Employee")/' + employeeId,
+        type: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                showAlert('success', response.message);
+
+                // Remove the row from table
+                $row.fadeOut(400, function() {
+                    $(this).remove();
+
+                    // Check if table is empty
+                    if ($('#employeeTable tbody tr').length === 0) {
+                        $('#employeeTable tbody').html('<tr id="noDataRow"><td colspan="6" class="text-center">No employees found.</td></tr>');
+                    }
+                });
+            } else {
+                showAlert('danger', response.message);
+                $(this).prop('disabled', false);
+            }
+        },
+        error: function (xhr, status, error) {
+            showAlert('danger', 'An error occurred while deleting the employee. Please try again.');
+            console.error('Error:', error);
+            $(this).prop('disabled', false);
+        }
+    });
+});
 
             // Reset form and errors when modal is closed
             $('#createEmployeeModal').on('hidden.bs.modal', function () {
