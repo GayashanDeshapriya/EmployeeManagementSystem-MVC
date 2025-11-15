@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using EmployeeManagementApp.Data.Context;
+using EmployeeManagementApp.Data.seed;
+using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Unity.Mvc5;
@@ -18,6 +20,17 @@ namespace EmployeeManagementApp
             // Configure Unity Dependency Injection
             var container = UnityConfig.RegisterComponents();
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+
+            // Seed the database with public holidays
+            SeedDatabase();
+        }
+        private void SeedDatabase()
+        {
+            using (var context = new EmployeeManagementDBEntities())
+            {
+                var seeder = new DatabaseSeeder(context);
+                seeder.SeedPublicHolidays();
+            }
         }
     }
 }

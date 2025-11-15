@@ -79,6 +79,7 @@
     <Compile Include="IEmployeeRepository.cs" />
     <Compile Include="IHolidayRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="seed\DatabaseSeeder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
