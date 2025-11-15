@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = "Working Days Calculator";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0"><i class="bi bi-calculator"></i> Working Days Calculator</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Calculate the number of working days between two dates.
+                        <strong>Note:</strong> The start date must be a weekday (Monday-Friday).
+                    </p>
+
+                    <form id="workingDaysForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="startDate" required />
+                                <div class="invalid-feedback">
+                                    Please select a valid start date (must be a weekday).
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="endDate" required />
+                                <div class="invalid-feedback">
+                                    Please select an end date.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-calculator"></i> Calculate
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btnReset">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="resultSection" class="mt-4" style="display: none;">
+                        <hr />
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading"><i class="bi bi-check-circle"></i> Calculation Result</h5>
+                            <p class="mb-0">
+                                Number of working days between <strong id="displayStartDate"></strong> and <strong id="displayEndDate"></strong>:
+                                <span class="badge bg-success fs-5" id="workingDaysResult">0</span> day(s)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="errorSection" class="mt-4" style="display: none;">
+                        <hr />
+                        <div class="alert alert-danger" role="alert">
+                            <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Error</h5>
+                            <p class="mb-0" id="errorMessage"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Form submission
+            $('#workingDaysForm').on('submit', function (e) {
+                debugger;
+                e.preventDefault();
+
+                // Hide previous results/errors
+                $('#resultSection').hide();
+                $('#errorSection').hide();
+
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+
+                if (!startDate || !endDate) {
+                    showError('Please select both start and end dates.');
+                    return;
+                }
+
+                // Client-side validation: check if start date is a weekend
+                var startDay = new Date(startDate).getDay();
+                if (startDay === 0 || startDay === 6) {
+                    showError('Start date must be a weekday (Monday-Friday), not a weekend.');
+                    $('#startDate').addClass('is-invalid');
+                    return;
+                }
+
+                $('#startDate').removeClass('is-invalid');
+
+                // Call API
+                $.ajax({
+                    url: '@Url.Action("Calculate", "WorkingDays")',
+                    type: 'POST',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showResult(startDate, endDate, response.workingDays);
+                        } else {
+                            showError(response.message);
+                        }
+                    },
+                    error: function () {
+                        showError('An error occurred while calculating working days.');
+                    }
+                });
+            });
+
+            // Reset button
+            $('#btnReset').on('click', function () {
+                $('#workingDaysForm')[0].reset();
+                $('#resultSection').hide();
+                $('#errorSection').hide();
+                $('#startDate').removeClass('is-invalid');
+                $('#endDate').removeClass('is-invalid');
+            });
+
+            function showResult(startDate, endDate, workingDays) {
+                $('#displayStartDate').text(formatDate(startDate));
+                $('#displayEndDate').text(formatDate(endDate));
+                $('#workingDaysResult').text(workingDays);
+                $('#resultSection').fadeIn();
+                $('#errorSection').hide();
+            }
+
+            function showError(message) {
+                $('#errorMessage').text(message);
+                $('#errorSection').fadeIn();
+                $('#resultSection').hide();
+            }
+
+            function formatDate(dateString) {
+                var date = new Date(dateString);
+                var options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+
+            // Set min date to today for better UX (optional)
+            var today = new Date().toISOString().split('T')[0];
+            // Uncomment the lines below if you want to restrict date selection
+            // $('#startDate').attr('min', today);
+            // $('#endDate').attr('min', today);
+        });
+    </script>
+}

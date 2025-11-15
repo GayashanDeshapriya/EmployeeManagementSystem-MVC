@@ -89,7 +89,9 @@
     <Compile Include="HolidayService.cs" />
     <Compile Include="IEmployeeService.cs" />
     <Compile Include="IHolidayService.cs" />
+    <Compile Include="IWorkingDaysService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkingDaysService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

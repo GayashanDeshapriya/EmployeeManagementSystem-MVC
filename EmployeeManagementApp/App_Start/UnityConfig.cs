@@ -23,6 +23,7 @@ namespace EmployeeManagementApp
             // Register Services
             container.RegisterType<IEmployeeService, EmployeeService>();
             container.RegisterType<IHolidayService, HolidayService>();
+            container.RegisterType<IWorkingDaysService, WorkingDaysService>();
 
             return container;
 
