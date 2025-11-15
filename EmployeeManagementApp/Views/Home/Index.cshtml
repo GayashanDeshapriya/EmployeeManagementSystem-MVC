@@ -1,8 +1,141 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Employee Management Application";
 }
 
 <main>
-    
+    <div class="welcome-container">
+        <div class="welcome-header">
+            <h1 class="welcome-title">
+                <i class="fas fa-users"></i>
+                Welcome to Employee Management System
+            </h1>
+            <p class="welcome-subtitle">Streamline your workforce management with ease</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3>Manage Employees</h3>
+                <p>Add, update, and track employee information efficiently</p>
+                <a href="@Url.Action("Employee", "Employee")" class="btn-feature">Go to Employees</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3>Working Days Calculator</h3>
+                <p>Calculate employee working days</p>
+                <a href="@Url.Action("Index", "WorkingDays")" class="btn-feature">Working Days Calculator</a>
+            </div>
+        </div>
+    </div>
 </main>
+
+<style>
+    .welcome-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .welcome-header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .welcome-title {
+        font-size: 2.5em;
+        margin: 0 0 15px 0;
+        font-weight: 700;
+    }
+
+        .welcome-title i {
+            margin-right: 15px;
+        }
+
+    .welcome-subtitle {
+        font-size: 1.3em;
+        margin: 0;
+        opacity: 0.95;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+    .feature-icon {
+        font-size: 3em;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 1.5em;
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .feature-card p {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .btn-feature {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-feature:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+    @@media (max-width: 768px) {
+        .welcome-title {
+            font-size: 1.8em;
+        }
+
+        .welcome-subtitle {
+            font-size: 1em;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
