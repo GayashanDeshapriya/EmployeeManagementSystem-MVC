@@ -29,7 +29,7 @@ namespace EmployeeManagementApp.Services
 
         public IEnumerable<Employee> GetAllEmployees()
         {
-            return _employeeRepo.GetAll();
+            return CacheHelper.CachedLong("all_employees", () => _employeeRepo.GetAll());
         }
 
         public Employee GetEmployeeById(int id)

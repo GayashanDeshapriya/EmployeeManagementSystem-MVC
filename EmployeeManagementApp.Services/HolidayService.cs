@@ -26,7 +26,7 @@ namespace EmployeeManagementApp.Services
 
         public IEnumerable<PublicHoliday> GetAllHolidays()
         {
-              return _holidayRepo.GetAll();
+              return CacheHelper.Cached("all_holidays", ()=> _holidayRepo.GetAll());
         }
 
         public PublicHoliday GetHolidayById(int id)
