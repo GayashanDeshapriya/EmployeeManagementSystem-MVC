@@ -55,6 +55,85 @@ namespace EmployeeManagementApp.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult GetEmployee(int id)
+        {
+            try
+            {
+                var employee = _service.GetEmployeeById(id);
+                if (employee == null)
+                {
+                    return Json(new { success = false, message = "Employee not found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        employeeId = employee.EmployeeId,
+                        name = employee.Name,
+                        email = employee.Email,
+                        jobPosition = employee.JobPosition
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Update(Employee model)
+        {
+            if (!ModelState.IsValid)
+            {
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = false, message = "Validation failed. Please check your inputs." });
+                }
+                return View(model);
+            }
+
+            try
+            {
+                var existingEmployee = _service.GetEmployeeById(model.EmployeeId);
+                if (existingEmployee == null)
+                {
+                    if (Request.IsAjaxRequest())
+                    {
+                        return Json(new { success = false, message = "Employee not found." });
+                    }
+                    return RedirectToAction("Employee");
+                }
+
+                // Update only the editable fields
+                existingEmployee.Name = model.Name;
+                existingEmployee.Email = model.Email;
+                existingEmployee.JobPosition = model.JobPosition;
+                existingEmployee.UpdatedAt = DateTime.Now;
+                existingEmployee.UpdatedBy = "System";
+
+                _service.UpdateEmployee(existingEmployee);
+
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = true, message = "Employee updated successfully!" });
+                }
+                return RedirectToAction("Employee");
+            }
+            catch (Exception ex)
+            {
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = false, message = "Error: " + ex.Message });
+                }
+                ModelState.AddModelError("", "An error occurred while updating the employee.");
+                return View(model);
+            }
+        }
+
         [HttpPost]
         public ActionResult Delete(int id)
         {

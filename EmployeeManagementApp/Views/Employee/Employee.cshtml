@@ -98,6 +98,46 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Employee Modal -->
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editEmployeeForm">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="EditEmployeeId" name="EmployeeId" />
+                        <div class="form-group mb-3">
+                            <label for="EditName">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="EditName" name="Name" required />
+                            <span class="text-danger" id="editNameError"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="EditEmail">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="EditEmail" name="Email" required />
+                            <span class="text-danger" id="editEmailError"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="EditJobPosition">Job Position <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="EditJobPosition" name="JobPosition" required />
+                            <span class="text-danger" id="editJobPositionError"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate">
+                            <span class="spinner-border spinner-border-sm d-none" id="updateLoadingSpinner"></span>
+                            Update Employee
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </main>
 
 @section scripts {
@@ -204,6 +244,137 @@
                 });
             });
 
+
+
+
+        $(document).on('click', '.btn-edit', function (e) {
+    e.preventDefault();
+
+    var employeeId = $(this).data('id');
+
+    // Clear previous errors
+    $('#editEmployeeForm .text-danger').text('');
+
+    // Show loading state
+    $(this).prop('disabled', true).html('<i class="glyphicon glyphicon-refresh spinning"></i> Loading...');
+    var $btn = $(this);
+
+    // Get employee data
+    $.ajax({
+        url: '@Url.Action("GetEmployee", "Employee")',
+        type: 'GET',
+        data: { id: employeeId },
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                // Populate the edit form
+                $('#EditEmployeeId').val(response.data.employeeId);
+                $('#EditName').val(response.data.name);
+                $('#EditEmail').val(response.data.email);
+                $('#EditJobPosition').val(response.data.jobPosition);
+
+                // Show the modal
+                $('#editEmployeeModal').modal('show');
+            } else {
+                showAlert('danger', response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            showAlert('danger', 'An error occurred while loading employee data. Please try again.');
+            console.error('Error:', error);
+        },
+        complete: function () {
+            $btn.prop('disabled', false).html('<i class="glyphicon glyphicon-edit"></i> Edit');
+        }
+    });
+});
+
+$('#btnUpdate').on('click', function (e) {
+    e.preventDefault();
+
+    // Clear previous errors
+    $('#editEmployeeForm .text-danger').text('');
+
+    // Get form data
+    var formData = {
+        EmployeeId: $('#EditEmployeeId').val(),
+        Name: $('#EditName').val().trim(),
+        Email: $('#EditEmail').val().trim(),
+        JobPosition: $('#EditJobPosition').val().trim(),
+        __RequestVerificationToken: $('#editEmployeeForm input[name="__RequestVerificationToken"]').val()
+    };
+
+    // Client-side validation
+    var isValid = true;
+    if (!formData.Name) {
+        $('#editNameError').text('Name is required.');
+        isValid = false;
+    }
+    if (!formData.Email) {
+        $('#editEmailError').text('Email is required.');
+        isValid = false;
+    } else if (!isValidEmail(formData.Email)) {
+        $('#editEmailError').text('Please enter a valid email address.');
+        isValid = false;
+    }
+    if (!formData.JobPosition) {
+        $('#editJobPositionError').text('Job Position is required.');
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    // Show loading spinner
+    $('#updateLoadingSpinner').removeClass('d-none');
+    $('#btnUpdate').prop('disabled', true);
+
+    // Submit via AJAX
+    $.ajax({
+        url: '@Url.Action("Update", "Employee")',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                showAlert('success', response.message);
+
+                // Close modal
+                $('#editEmployeeModal').modal('hide');
+
+                // Update the table row without reloading
+                var $row = $('tr[data-employee-id="' + formData.EmployeeId + '"]');
+                $row.find('.employee-name').text(formData.Name);
+                $row.find('.employee-email').text(formData.Email);
+                $row.find('.employee-position').text(formData.JobPosition);
+                
+                // Highlight the updated row
+                $row.addClass('table-success');
+                setTimeout(function () {
+                    $row.removeClass('table-success');
+                }, 2000);
+
+                // Refresh to show new data (or inject row via JS)
+                setTimeout(function () {
+                    location.reload();
+                }, 800);
+
+            } else {
+                showAlert('danger', response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            showAlert('danger', 'An error occurred while updating the employee. Please try again.');
+            console.error('Error:', error);
+        },
+        complete: function () {
+            $('#updateLoadingSpinner').addClass('d-none');
+            $('#btnUpdate').prop('disabled', false);
+        }
+    });
+});
+
+
+
             $(document).on('click', '.btn-delete', function (e) {
                 debugger;
     e.preventDefault();
@@ -236,6 +407,12 @@
                         $('#employeeTable tbody').html('<tr id="noDataRow"><td colspan="6" class="text-center">No employees found.</td></tr>');
                     }
                 });
+
+                // Refresh to show new data (or inject row via JS)
+                setTimeout(function () {
+                    location.reload();
+                }, 800);
+
             } else {
                 showAlert('danger', response.message);
                 $(this).prop('disabled', false);

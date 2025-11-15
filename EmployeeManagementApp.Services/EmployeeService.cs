@@ -40,6 +40,7 @@ namespace EmployeeManagementApp.Services
         public void UpdateEmployee(Employee employee)
         {
             _employeeRepo.Update(employee);
+            _employeeRepo.Save();
         }
     }
 }

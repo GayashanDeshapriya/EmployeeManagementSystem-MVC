@@ -35,7 +35,7 @@ namespace EmployeeManagementApp.Data
 
         public Employee GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.Employees.Find(id);
         }
 
         public void Save()
@@ -45,7 +45,11 @@ namespace EmployeeManagementApp.Data
 
         public void Update(Employee employee)
         {
-            throw new NotImplementedException();
+            var existingEmployee = _context.Employees.Find(employee.EmployeeId);
+            if (existingEmployee != null)
+            {
+                _context.Entry(existingEmployee).CurrentValues.SetValues(employee);
+            }
         }
         IEnumerable<Employee> IEmployeeRepository.GetAll()
         {
