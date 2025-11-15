@@ -14,6 +14,7 @@ namespace EmployeeManagementApp.Data.Context
     
     public partial class Employee
     {
+        public int EmployeeId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string JobPosition { get; set; }
@@ -21,6 +22,5 @@ namespace EmployeeManagementApp.Data.Context
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
-        public System.Guid EmployeeId { get; set; }
     }
 }

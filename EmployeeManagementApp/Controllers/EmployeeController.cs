@@ -33,7 +33,7 @@ namespace EmployeeManagementApp.Controllers
 
             try
             {
-                model.EmployeeId = Guid.NewGuid();
+                
                 model.CreatedAt = DateTime.Now;
                 model.CreatedBy = "System";
                 _service.AddEmployee(model);

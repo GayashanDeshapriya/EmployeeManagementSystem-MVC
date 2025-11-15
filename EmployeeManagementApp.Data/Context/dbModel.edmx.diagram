@@ -6,7 +6,7 @@
     <edmx:Diagrams>
       <Diagram DiagramId="43426c4a059e4c57b2da2df2034f89af" Name="Diagram1">
         <EntityTypeShape EntityType="EmployeeManagementDBModel.PublicHoliday" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="EmployeeManagementDBModel.Employee" Width="1.5" PointX="0.625" PointY="0.625" />
+        <EntityTypeShape EntityType="EmployeeManagementDBModel.Employee" Width="1.5" PointX="4.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
